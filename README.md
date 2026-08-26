@@ -1,8 +1,11 @@
 # Projeto Extensionista — Sistemas Microcontrolados
 
-Universidade EStácio de Sá
+Universidade Estácio de Sá
+
 Campos Niterói
+
 Professor: Marcelo Peratoni
+
 Ano 2026.2
 
 ## 📌 Sobre o projeto
