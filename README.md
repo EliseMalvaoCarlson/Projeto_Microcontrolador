@@ -56,6 +56,10 @@ A simulação do protótipo é realizada no **Cirkit Designer**, permitindo test
 
 Embora o projeto tenha sido inicialmente pensado para uma clínica de oftalmologia, sua aplicação não se limita a esse ambiente. A solução pode ser expandida para diferentes espaços residenciais e comerciais, mediante pequenas adaptações na programação e na configuração dos componentes, conforme as necessidades de cada local.
 
+<p align="center">
+  <img src="circuito (2).jpeg" width="700">
+</p>
+
 ## 👥 Equipe do projeto
 
 Projeto desenvolvido por:
