@@ -1,53 +1,61 @@
-# Projeto Extensionista — Sistemas Microcontrolados
-
-Universidade Estácio de Sá
-
-Campos Niterói
-
-Professor: Marcelo Peratoni
-
-Ano 2026.2
+# 💡 Automação Inteligente da Iluminação – Clínica de Oftalmologia
 
 ## 📌 Sobre o projeto
 
-Este projeto extensionista tem como objetivo apresentar o uso de **pequeno sistema computacional microcontrolado** como uma alternativa de baixo custo para solucionar um problema do cotidiano
-por meio da automação de equipamentos e processos.
+Este projeto extensionista tem como objetivo desenvolver uma solução de automação para o controle da iluminação de três salas de uma clínica de oftalmologia, utilizando o microcontrolador **ESP32 e sensores de presença por detecção de passagem**.
 
-A proposta integra **teoria e prática** de forma interdisciplinar, envolvendo conhecimentos de:
+A proposta consiste em monitorar a entrada e a saída de pessoas em cada ambiente, mantendo a iluminação ligada enquanto houver alguém na sala e desligando-a automaticamente quando não houver mais ocupantes.
 
-* Sistemas Operacionais
-* Sistemas Digitais
-* Sistemas Distribuídos e Computação Paralela
-* Programação de Software Básico em C
-* Linguagens Formais, Autômatos e Compiladores
+## 🎯 Problema identificado
 
-## 🎯 Objetivo
+A iluminação de ambientes que não estão sendo utilizados pode gerar desperdício de energia elétrica, especialmente quando o acionamento e o desligamento das lâmpadas dependem exclusivamente da intervenção humana.
 
-Desenvolver soluções baseadas em plataformas microcontroladas de baixo custo, capazes de **automatizar, controlar ou monitorar equipamentos e processos** em ambientes residenciais ou comerciais.
+A solução proposta busca reduzir esse desperdício, proporcionando maior eficiência energética, praticidade e automatização da rotina da clínica.
 
-A aplicação dessas tecnologias pode contribuir para:
+## ⚙️ Como funciona a solução
 
-* Automação de tarefas rotineiras;
-* Maior integração entre equipamentos;
-* Desenvolvimento de soluções inteligentes;
-* Redução de custos;
-* Melhoria da qualidade de rotina;
-* Aumento da eficiência em pequenos negócios.
+O ESP32 recebe as informações dos sensores instalados nos acessos dos ambientes e identifica a sequência de passagem das pessoas.
 
-## 🌐 Impacto social
+A partir dessa identificação, o sistema realiza a contagem de entradas e saídas, atualizando a quantidade de pessoas presentes em cada sala.
 
-A utilização de sistemas microcontrolados possibilita levar recursos de automação e tecnologia para situações em que soluções tradicionais podem apresentar custos elevados.
+- **Entrada:** a contagem de pessoas é incrementada e a iluminação é acionada.
+- **Saída:** a contagem é decrementada.
+- **Ambiente vazio:** quando a contagem chega a zero, a iluminação é desligada automaticamente.
+- **Ambiente ocupado:** enquanto houver pelo menos uma pessoa, a iluminação permanece ligada.
 
-Dessa forma, o projeto busca demonstrar que tecnologias acessíveis podem ser utilizadas para resolver **problemas reais da comunidade**, contribuindo para a inclusão e a cultura digital.
+## 🔌 Tecnologias e componentes
 
-## 💡 Aprendizagem na prática
+- **ESP32:** microcontrolador responsável pelo processamento das informações e controle do sistema.
+- **Sensores ultrassônicos HC-SR04:** utilizados para identificar a sequência de passagem das pessoas.
+- **Módulo relé:** representa o acionamento do circuito de iluminação.
+- **LED:** utilizado para simular a lâmpada do ambiente.
+- **Display OLED:** permite apresentar informações do funcionamento do sistema.
+- **Buzzer:** componente auxiliar para sinalização.
 
-Além do desenvolvimento tecnológico, o projeto proporciona uma experiência prática de **transformação digital**.
+## 🛠️ Desenvolvimento
 
-Ao identificar uma necessidade, propor uma solução e desenvolver um protótipo funcional, o aluno desenvolve competências técnicas e também a capacidade de compreender as necessidades dos usuários e transformar problemas em soluções tecnológicas.
+O projeto envolve a elaboração do circuito eletrônico, programação do ESP32, integração dos sensores e desenvolvimento da lógica de controle da iluminação.
 
-## 🚀 Resultados esperados
+A montagem e os testes do protótipo são realizados em ambiente de simulação, utilizando o **Cirkit Designer**, permitindo avaliar o funcionamento dos componentes e realizar ajustes antes de uma possível implementação física.
 
-Espera-se que o projeto contribua para a formação acadêmica e profissional do aluno, proporcionando experiência no desenvolvimento de soluções utilizando tecnologias consolidadas e emergentes.
+## 🌱 Benefícios esperados
 
-A iniciativa também busca demonstrar como sistemas microcontrolados podem ampliar a integração entre pessoas, equipamentos e processos, criando soluções acessíveis, eficientes e aplicáveis ao cotidiano.
+- Redução do consumo desnecessário de energia elétrica.
+- Automatização do controle de iluminação.
+- Maior praticidade para os profissionais da clínica.
+- Melhor aproveitamento dos recursos disponíveis.
+- Possibilidade de expansão da solução para outros ambientes.
+
+## 👥 Equipe do projeto
+
+Projeto desenvolvido por:
+
+- Ailton
+- Leonardo
+- Elise Malvão Carlson
+- Letícia
+- Lucas
+- Pedro
+
+**Projeto Extensionista – Sistemas Microcontrolados**  
+Curso de Ciência da Computação – Universidade Estácio de Sá - 2026.2
