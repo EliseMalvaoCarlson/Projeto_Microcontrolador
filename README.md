@@ -64,12 +64,12 @@ Embora o projeto tenha sido inicialmente pensado para uma clínica de oftalmolog
 
 Projeto desenvolvido por:
 
-- Ailton
-- Leonardo
+- Ailton Alves de Araújo Neto
 - Elise Malvão Carlson
-- Letícia
-- Lucas
-- Pedro
+- Leonardo Da Silva Dionizio
+- Letícia Simões Figueiras Machado
+- Lucas Vianna Carvalho
+- Pedro Da Costa Cardoso
 
 **Projeto Extensionista – Sistemas Microcontrolados**  
 Curso de Ciência da Computação – Universidade Estácio de Sá.
