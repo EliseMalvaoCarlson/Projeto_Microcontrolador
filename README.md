@@ -64,7 +64,7 @@ Embora o projeto tenha sido inicialmente pensado para uma clínica de oftalmolog
 
 Projeto desenvolvido por:
 
-- Ailton Alves de Araújo Neto
+- Ailton Alves de Araujo Neto
 - Elise Malvão Carlson
 - Leonardo Da Silva Dionizio
 - Letícia Simões Figueiras Machado
