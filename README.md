@@ -82,5 +82,5 @@ Curso de Ciência da Computação – Universidade Estácio de Sá.
 Projeto de iluminação com sensores:
 https://app.cirkitdesigner.com/project/085e63c5-8563-4c2a-acc4-8e640f10713c
 
-Projeto de iluminação com sensores adaptados para banheiro:
+Projeto de iluminação com sensores e aromatizador para banheiro:
 https://app.cirkitdesigner.com/project/73eb7ef6-3406-497f-af49-49e218e0492c
