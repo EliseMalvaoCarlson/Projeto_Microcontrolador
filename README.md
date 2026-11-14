@@ -59,6 +59,9 @@ Embora o projeto tenha sido inicialmente pensado para uma clínica de oftalmolog
 <p align="center">
   <img src="circuito (2).jpeg" width="700">
 </p>
+<p align="center">
+  <img src="projeto-de-iluminacao-adaptado-para-banheiro.png" width="700">
+</p>
 
 ## 👥 Equipe do projeto
 
