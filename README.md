@@ -1,4 +1,4 @@
-# 💡 Automação Inteligente de Iluminação e Conforto Ambiental
+# 💡 Sistema Inteligente de Controle de Iluminação e Contagem de Pessoas
 
 ## 📌 Sobre o projeto
 
