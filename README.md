@@ -80,7 +80,7 @@ Curso de Ciência da Computação – Universidade Estácio de Sá.
 
 ## Links do projeto no Cirkit Designer:
 Projeto de iluminação com sensores:
-https://app.cirkitdesigner.com/project/085e63c5-8563-4c2a-acc4-8e640f10713c
+https://app.cirkitdesigner.com/project/fa6a1021-46f6-4d9d-9219-598b58d19b46
 
 Projeto de iluminação com sensores e aromatizador para banheiro:
-https://app.cirkitdesigner.com/project/73eb7ef6-3406-497f-af49-49e218e0492c
+https://app.cirkitdesigner.com/project/bb69a145-4985-4191-acc6-53630d123901
