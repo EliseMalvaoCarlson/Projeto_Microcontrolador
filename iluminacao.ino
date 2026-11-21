@@ -2,42 +2,50 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#define RELE_ATIVO_LOW false
+
+#if RELE_ATIVO_LOW
+  #define RELE_LIGADO LOW
+  #define RELE_DESLIGADO HIGH
+#else
+  #define RELE_LIGADO HIGH
+  #define RELE_DESLIGADO LOW
+#endif
+
 #define TRIG_CIMA 4
 #define ECHO_CIMA 5
 #define TRIG_BAIXO 18
 #define ECHO_BAIXO 19
 #define PINO_RELE 15
 
+// Botoes opcionais para apresentacao (ligar pino ao GND)
+#define PINO_BOTAO_SAIDA 25
+#define PINO_BOTAO_ENTRADA 26
+
 #define LARGURA_OLED 128
 #define ALTURA_OLED 64
 #define ENDERECO_OLED 0x3C
 
-Adafruit_SSD1306 oled(
-  LARGURA_OLED,
-  ALTURA_OLED,
-  &Wire,
-  -1
-);
+Adafruit_SSD1306 oled(LARGURA_OLED, ALTURA_OLED, &Wire, -1);
 
 const int DISTANCIA_GATILHO = 100;
-
-const unsigned long TEMPO_MAXIMO_MOVIMENTO = 3000;
-const unsigned long TEMPO_MAXIMO_LAMPADA = 2UL * 60UL * 60UL * 1000UL;
+const unsigned long TEMPO_MAXIMO_MOVIMENTO = 10000;
 
 unsigned long tempoPrimeiraDeteccao = 0;
 int estadoMovimento = 0;
 int contadorPessoas = 0;
 
-// Controle da lampada
 bool lampadaBloqueada = false;
 unsigned long tempoLampadaLigada = 0;
 
-// Detecta mudancas na contagem
 int ultimoEstadoPessoas = 0;
 
-// Mensagem temporaria no display
-unsigned long tempoMensagem = 0;
-bool mensagemFalha = false;
+bool cimaAntes = false;
+bool baixoAntes = false;
+
+bool botaoSaidaAntes = HIGH;
+bool botaoEntradaAntes = HIGH;
+unsigned long ultimoCliqueBotao = 0;
 
 long lerDistancia(int pinoTrig, int pinoEcho) {
   digitalWrite(pinoTrig, LOW);
@@ -60,20 +68,17 @@ void atualizarDisplayStatus() {
   oled.clearDisplay();
   oled.setTextColor(SSD1306_WHITE);
 
-  // Titulo
   oled.setTextSize(1);
   oled.setCursor(0, 0);
   oled.println("CONTROLE DO AMBIENTE");
 
   oled.drawLine(0, 12, 127, 12, SSD1306_WHITE);
 
-  // Contagem
   oled.setTextSize(2);
   oled.setCursor(0, 19);
   oled.print("Pessoas: ");
   oled.println(contadorPessoas);
 
-  // Estado da lampada
   oled.setTextSize(1);
   oled.setCursor(0, 43);
 
@@ -89,25 +94,11 @@ void atualizarDisplayStatus() {
 }
 
 void atualizarLampada() {
-  bool deveLigar = (contadorPessoas > 0 && !lampadaBloqueada);
-  digitalWrite(PINO_RELE, deveLigar ? HIGH : LOW);
-}
-
-void mostrarFalhaMovimento() {
-  oled.clearDisplay();
-  oled.setTextColor(SSD1306_WHITE);
-  oled.setTextSize(1);
-
-  oled.setCursor(0, 10);
-  oled.println("MOVIMENTO FALHOU");
-
-  oled.setCursor(0, 30);
-  oled.println("Tente novamente");
-
-  oled.display();
-
-  tempoMensagem = millis();
-  mensagemFalha = true;
+  if (contadorPessoas > 0) {
+    digitalWrite(PINO_RELE, RELE_LIGADO);
+  } else {
+    digitalWrite(PINO_RELE, RELE_DESLIGADO);
+  }
 }
 
 void setup() {
@@ -118,89 +109,117 @@ void setup() {
   pinMode(TRIG_BAIXO, OUTPUT);
   pinMode(ECHO_BAIXO, INPUT);
 
-  pinMode(PINO_RELE, OUTPUT);
+  pinMode(PINO_BOTAO_SAIDA, INPUT_PULLUP);
+  pinMode(PINO_BOTAO_ENTRADA, INPUT_PULLUP);
 
-  digitalWrite(PINO_RELE, LOW);
+  digitalWrite(PINO_RELE, RELE_DESLIGADO);
+  pinMode(PINO_RELE, OUTPUT);
 
   Wire.begin(21, 22);
 
-  if (!oled.begin(SSD1306_SWITCHCAPVCC, ENDERECO_OLED)) {
-    Serial.println("Falha ao iniciar o OLED");
-    while (true) {
-      delay(100);
-    }
+  if (oled.begin(SSD1306_SWITCHCAPVCC, ENDERECO_OLED)) {
+    oled.clearDisplay();
+    oled.display();
   }
 
-  oled.clearDisplay();
-  oled.display();
+  cimaAntes = lerDistancia(TRIG_CIMA, ECHO_CIMA) < DISTANCIA_GATILHO;
+  delay(15);
+  baixoAntes = lerDistancia(TRIG_BAIXO, ECHO_BAIXO) < DISTANCIA_GATILHO;
 
   atualizarLampada();
   atualizarDisplayStatus();
 }
 
 void loop() {
+  // 1. Botoes opcionais de +1 (GPIO 26) e -1 (GPIO 25)
+  bool botaoEntradaAtual = digitalRead(PINO_BOTAO_ENTRADA);
+  if (botaoEntradaAntes == HIGH && botaoEntradaAtual == LOW && (millis() - ultimoCliqueBotao > 250)) {
+    ultimoCliqueBotao = millis();
+    contadorPessoas++;
+    estadoMovimento = 0;
+  }
+  botaoEntradaAntes = botaoEntradaAtual;
+
+  bool botaoSaidaAtual = digitalRead(PINO_BOTAO_SAIDA);
+  if (botaoSaidaAntes == HIGH && botaoSaidaAtual == LOW && (millis() - ultimoCliqueBotao > 250)) {
+    ultimoCliqueBotao = millis();
+    if (contadorPessoas > 0) {
+      contadorPessoas--;
+    }
+    estadoMovimento = 0;
+  }
+  botaoSaidaAntes = botaoSaidaAtual;
+
+  // 2. Leitura dos sensores ultrassonicos
   long distCima = lerDistancia(TRIG_CIMA, ECHO_CIMA);
-
-  delay(10);
-
+  delay(15);
   long distBaixo = lerDistancia(TRIG_BAIXO, ECHO_BAIXO);
 
-  bool detectouCima = distCima < DISTANCIA_GATILHO;
-  bool detectouBaixo = distBaixo < DISTANCIA_GATILHO;
+  bool cimaPerto = distCima < DISTANCIA_GATILHO;
+  bool baixoPerto = distBaixo < DISTANCIA_GATILHO;
 
-  // Timeout de movimento
-  if (estadoMovimento != 0 &&
-      millis() - tempoPrimeiraDeteccao > TEMPO_MAXIMO_MOVIMENTO) {
+  bool baixoAproximou = (!baixoAntes && baixoPerto);
+  bool cimaAproximou  = (!cimaAntes && cimaPerto);
+  bool cimaAfastou    = (cimaAntes && !cimaPerto);
+  bool baixoAfastou   = (baixoAntes && !baixoPerto);
 
+  if (estadoMovimento != 0 && (millis() - tempoPrimeiraDeteccao > TEMPO_MAXIMO_MOVIMENTO)) {
     estadoMovimento = 0;
-    mostrarFalhaMovimento();
   }
 
   if (estadoMovimento == 0) {
-
-    // Entrada: sensor superior primeiro
-    if (detectouCima && !detectouBaixo) {
+    // Entrada: Baixo aproxima primeiro (com Cima ainda longe)
+    if (baixoAproximou && !cimaPerto) {
       estadoMovimento = 1;
       tempoPrimeiraDeteccao = millis();
     }
-
-    // Saida: sensor inferior primeiro
-    else if (detectouBaixo && !detectouCima) {
+    // Saida (partindo de longe): Cima aproxima primeiro (com Baixo ainda longe)
+    else if (cimaAproximou && !baixoPerto) {
       estadoMovimento = 2;
       tempoPrimeiraDeteccao = millis();
     }
+    // Saida (partindo de perto): Cima afasta primeiro (com Baixo ainda perto)
+    // Se Baixo afastar primeiro, nao entra aqui: apenas reseta livre para a proxima entrada!
+    else if (cimaAfastou && baixoPerto) {
+      estadoMovimento = 3;
+      tempoPrimeiraDeteccao = millis();
+    }
   }
-
   else if (estadoMovimento == 1) {
-
-    if (detectouBaixo) {
+    if (cimaAproximou) {
       contadorPessoas++;
       estadoMovimento = 0;
+    } else if (baixoAfastou) {
+      estadoMovimento = 0; // Cancelou o movimento
     }
   }
-
   else if (estadoMovimento == 2) {
-
-    if (detectouCima) {
-
-      if (contadorPessoas > 0) {
-        contadorPessoas--;
-      }
-
+    if (baixoAproximou) {
+      if (contadorPessoas > 0) contadorPessoas--;
+      estadoMovimento = 0;
+    } else if (cimaAfastou) {
+      estadoMovimento = 0;
+    }
+  }
+  else if (estadoMovimento == 3) {
+    if (baixoAfastou) {
+      if (contadorPessoas > 0) contadorPessoas--;
+      estadoMovimento = 0;
+    } else if (cimaAproximou) {
       estadoMovimento = 0;
     }
   }
 
-  // Detecta alteracoes no numero de pessoas
-  if (contadorPessoas != ultimoEstadoPessoas) {
+  cimaAntes = cimaPerto;
+  baixoAntes = baixoPerto;
 
-    // Ambiente passou de vazio para ocupado
+  // 3. Atualiza lampada e display
+  if (contadorPessoas != ultimoEstadoPessoas) {
     if (ultimoEstadoPessoas == 0 && contadorPessoas > 0) {
       tempoLampadaLigada = millis();
       lampadaBloqueada = false;
     }
 
-    // A ultima pessoa saiu
     if (ultimoEstadoPessoas > 0 && contadorPessoas == 0) {
       lampadaBloqueada = false;
     }
@@ -209,21 +228,7 @@ void loop() {
     atualizarDisplayStatus();
   }
 
-  // Limite de duas horas de iluminacao
-  if (contadorPessoas > 0 && !lampadaBloqueada) {
-
-    if (millis() - tempoLampadaLigada >= TEMPO_MAXIMO_LAMPADA) {
-      lampadaBloqueada = true;
-    }
-  }
-
   atualizarLampada();
-
-  // Restaura a tela principal apos uma falha
-  if (mensagemFalha && millis() - tempoMensagem >= 1500) {
-    mensagemFalha = false;
-    atualizarDisplayStatus();
-  }
 
   delay(50);
 }
